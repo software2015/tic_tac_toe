@@ -4,7 +4,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={(props.winner_row != null && props.winner_row.includes(props.square_id)) ? "square highlight" : "square"} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -14,6 +14,8 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        square_id={i}
+        winner_row={this.props.winner_row}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -38,7 +40,6 @@ class Board extends React.Component {
     return rows;
   }
 
-
   render() {
     return (
       <div>
@@ -58,7 +59,8 @@ class Game extends React.Component {
         boxNumber: null, //For tracking the position of the input
       }],
       xIsNext: true,
-      stepNumber: 0
+      stepNumber: 0,
+      historyReverse: false
     };
   }
 
@@ -87,10 +89,19 @@ class Game extends React.Component {
     })
   }
 
+  reverseHistory(){
+    this.setState({
+      historyReverse: !this.state.historyReverse
+    })
+  }
+
   render() {
-    const history = this.state.history;
+    const max_moves = 9
+    const history = this.state.history
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winner_info = calculateWinner(current.squares)
+    const winner = winner_info ? winner_info.winner : null
+    const winner_row = winner_info ? winner_info.winner_row : null
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -103,9 +114,13 @@ class Game extends React.Component {
       );
     });
 
+    var moves_ordered = this.state.historyReverse ? moves.reverse() : moves
+
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
+    } else if (this.state.stepNumber == max_moves){
+      status = 'Draw';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -114,13 +129,15 @@ class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board
+            winner_row={winner_row}
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ul>{moves_ordered}</ul>
+          <button onClick={() => this.reverseHistory()}>Reverse history</button>
         </div>
       </div>
     );
@@ -158,7 +175,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {winner: squares[a], winner_row: [a,b,c]};
     }
   }
   return null;

@@ -52,3 +52,8 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
+.highlight{
+  color: red;
+  border: 2px solid red;
+}
