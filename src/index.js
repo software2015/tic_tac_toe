@@ -105,12 +105,12 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move + findPosition(step.boxNumber) :
-        'Go to game start';
+        'Вернуться к ходу #' + move + findPosition(step.boxNumber) :
+        'Вернуться к началу';
       return (
-        <li key={move}>
-          <button className={(this.state.stepNumber == move) ? "bold" : ""} onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
+        <ul key={move} className="list-group">
+          <button className={(this.state.stepNumber == move) ? "bold list-group-item" : "list-group-item"} onClick={() => this.jumpTo(move)}>{desc}</button>
+        </ul>
       );
     });
 
@@ -118,26 +118,26 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = 'Победитель: ' + winner;
     } else if (this.state.stepNumber == max_moves){
-      status = 'Draw';
+      status = 'Ничья';
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      status = 'Следующий игрок: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
     return (
-      <div className="game">
-        <div className="game-board">
+      <div className="game row">
+        <div className="game-board col-lg-6 col-md-6 col-sm-6 col-xs-6">
           <Board
             winner_row={winner_row}
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
-        <div className="game-info">
-          <div>{status}</div>
+        <div className="game-info col-lg-6 col-md-6 col-sm-6 col-xs-6">
+          <div className="status">{status}</div>
           <ul>{moves_ordered}</ul>
-          <button onClick={() => this.reverseHistory()}>Reverse history</button>
+          <button className="btn-success" onClick={() => this.reverseHistory()}>Поменять порядок истории</button>
         </div>
       </div>
     );
