@@ -6,4 +6,4 @@
 
 ### Steps for running the app:
 
- 1. npm start
+	1. npm start
