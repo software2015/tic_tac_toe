@@ -1,9 +1,9 @@
-### Tic Tac Toe
+# Tic Tac Toe
 
-# Tech stack info:
+### Tech stack info:
 
 * React.js
 
-# Steps for running the app:
+### Steps for running the app:
 
  npm start
